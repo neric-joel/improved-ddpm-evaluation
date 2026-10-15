@@ -1,0 +1,11 @@
+# Install PyTorch with CUDA first (https://pytorch.org). Tested: torch 2.11.0+cu128, torchvision 0.26.0+cu128.
+torch
+torchvision
+numpy>=2.0        # tested 2.5.2
+pillow            # tested 12.3.0
+scipy             # tested 1.18.1
+tqdm              # tested 4.70.1
+pyarrow           # tested 26.0.0
+pytorch-fid==0.3.0
+fastapi           # tested 0.143.0, live demo only
+uvicorn           # tested 0.54.0, live demo only

@@ -1,0 +1,125 @@
+00:29:57 === stage quick ===
+00:30:13 quick cifar learned K=10 n=36 16.5s
+00:30:14 quick cifar fixed_large K=10 n=36 1.1s
+00:30:16 quick cifar fixed_small K=10 n=36 1.1s
+00:30:17 quick cifar ddim K=10 n=36 1.2s
+00:30:20 quick cifar learned K=25 n=36 2.8s
+00:30:22 quick cifar fixed_large K=25 n=36 2.8s
+00:30:25 quick cifar fixed_small K=25 n=36 2.8s
+00:30:28 quick cifar ddim K=25 n=36 2.8s
+00:30:34 quick cifar learned K=50 n=36 5.6s
+00:30:39 quick cifar fixed_large K=50 n=36 5.6s
+00:30:45 quick cifar fixed_small K=50 n=36 5.6s
+00:30:51 quick cifar ddim K=50 n=36 5.7s
+00:31:02 quick cifar learned K=100 n=36 11.3s
+00:31:14 quick cifar fixed_large K=100 n=36 11.3s
+00:31:25 quick cifar fixed_small K=100 n=36 11.5s
+00:31:37 quick cifar ddim K=100 n=36 11.6s
+00:32:05 quick cifar learned K=250 n=36 28.8s
+00:32:34 quick cifar fixed_large K=250 n=36 28.4s
+00:33:02 quick cifar fixed_small K=250 n=36 28.4s
+00:33:31 quick cifar ddim K=250 n=36 28.7s
+00:33:31 === stage quick done in 214s ===
+00:33:31 === stage traj ===
+00:33:47 traj cifar_hybrid learned K=25
+00:33:48 traj cifar_hybrid fixed_large K=25
+00:33:51 traj cifar_hybrid learned K=50
+00:33:53 traj cifar_hybrid fixed_large K=50
+00:34:06 traj cifar_hybrid learned K=250
+00:34:19 traj cifar_hybrid fixed_large K=250
+00:34:46 traj imagenet64_hybrid learned K=50
+00:34:50 traj imagenet64_hybrid fixed_large K=50
+00:35:10 traj imagenet64_hybrid learned K=250
+00:35:31 traj imagenet64_hybrid fixed_large K=250
+00:35:31 === stage traj done in 119s ===
+00:35:31 === stage latency ===
+00:35:53 latency bs1 K=10: 0.442 s/image
+00:35:57 latency bs1 K=25: 1.08 s/image
+00:36:06 latency bs1 K=50: 2.142 s/image
+00:36:23 latency bs1 K=100: 4.301 s/image
+00:37:07 latency bs1 K=250: 10.899 s/image
+00:38:35 latency bs1 K=1000: 44.369 s/image
+00:44:44 latency bs1 K=4000: 181.699 s/image
+00:44:45 === stage latency done in 554s ===
+00:44:45 === stage ood ===
+00:50:19 ood cifar_hybrid cifar10_test: mean 3.248 bpd (n=500, 332s)
+00:55:19 ood cifar_hybrid svhn_test: mean 2.283 bpd (n=500, 299s)
+01:00:29 ood cifar_hybrid cifar10_train: mean 3.156 bpd (n=500, 310s)
+01:02:49 ood cifar_hybrid cifar10_vflip: mean 3.340 bpd (n=200, 140s)
+01:04:49 ood cifar_hybrid cifar10_gaussnoise: mean 8.459 bpd (n=200, 121s)
+01:09:46 ood cifar_vlb cifar10_test: mean 3.030 bpd (n=500, 297s)
+01:14:44 ood cifar_vlb svhn_test: mean 2.367 bpd (n=500, 298s)
+01:19:51 ood cifar_vlb cifar10_train: mean 2.925 bpd (n=500, 307s)
+01:21:51 ood cifar_vlb cifar10_vflip: mean 3.361 bpd (n=200, 120s)
+01:23:51 ood cifar_vlb cifar10_gaussnoise: mean 6.984 bpd (n=200, 120s)
+01:23:51 ood summary {"cifar_hybrid": {"cifar10_test": {"mean": 3.2480385303497314, "std": 0.6306858062744141, "median": 3.2849340438842773, "n": 500}, "svhn_test": {"mean": 2.282607078552246, "std": 0.4022316038608551, "median": 2.2592391967773438, "n": 500, "auroc_vs_cifar10_test": 0.09968}, "cifar10_train": {"mean": 3.1557865142822266, "std": 0.6752445697784424, "median": 3.2024059295654297, "n": 500, "auroc_vs_cifar10_test": 0.464464}, "cifar10_vflip": {"mean": 3.339902400970459, "std": 0.5946349501609802, "median": 3.280056953430176, "n": 200, "auroc_vs_cifar10_test": 0.53375}, "cifar10_gaussnoise": {"mean": 8.459136009216309, "std": 0.23458322882652283, "median": 8.499517440795898, "n": 200, "auroc_vs_cifar10_test": 1.0}}, "cifar_vlb": {"cifar10_test": {"mean": 3.0302627086639404, "std": 0.6456498503684998, "median": 3.021782636642456, "n": 500}, "svhn_test": {"mean": 2.366502046585083, "std": 0.42591363191604614, "median": 2.3394107818603516, "n": 500, "auroc_vs_cifar10_test": 0.187088}, "cifar10_train": {"mean": 2.9247612953186035, "std": 0.6753510236740112, "median": 2.9367668628692627, "n": 500, "auroc_vs_cifar10_test": 0.458492}, "cifar10_vflip": {"mean": 3.3613061904907227, "std": 0.6183274388313293, "median": 3.3425981998443604, "n": 200, "auroc_vs_cifar10_test": 0.6568}, "cifar10_gaussnoise": {"mean": 6.983743667602539, "std": 0.14788110554218292, "median": 7.0134501457214355, "n": 200, "auroc_vs_cifar10_test": 1.0}}}
+01:23:51 === stage ood done in 2346s ===
+01:23:51 === stage imagenet ===
+01:24:20 imagenet learned K=25 29.8s
+01:24:30 imagenet learned K=50 9.5s
+01:24:49 imagenet learned K=100 19.2s
+01:25:37 imagenet learned K=250 47.8s
+01:25:42 imagenet fixed_large K=25 4.8s
+01:25:51 imagenet fixed_large K=50 9.6s
+01:25:56 imagenet fixed_small K=25 4.8s
+01:26:01 imagenet ddim K=25 4.8s
+01:26:01 === stage imagenet done in 131s ===
+01:26:01 === stage nn ===
+01:26:02 nn: gen->train L2 median 8.83; test->train median 9.20
+01:26:02 === stage nn done in 1s ===
+01:26:02 === stage vlb ===
+01:36:19 vlb cifar_hybrid: total 3.372 bpd over 32 imgs (616s)
+01:46:16 vlb cifar_vlb: total 3.147 bpd over 32 imgs (596s)
+01:46:16 === stage vlb done in 1214s ===
+01:46:16 === stage long ===
+01:48:11 long cifar learned K=1000 n=36 114.6s
+01:55:46 long cifar learned K=4000 n=36 455.1s
+01:57:39 long cifar fixed_large K=1000 n=36 113.1s
+01:59:31 long cifar fixed_small K=1000 n=36 111.8s
+02:01:26 long cifar ddim K=1000 n=36 114.4s
+02:01:26 === stage long done in 909s ===
+02:01:26 === stage fid ===
+02:10:18 fid: train stats over 50000 imgs (527s)
+02:11:12 === stage fid ===
+02:12:27 fid floor (real test, n=1000): {'fid': 30.436413055933315, 'precision': 0.8050000667572021, 'recall': 0.7680000066757202, 'n': 1000}
+02:13:22 fid samples learned K=10 n=1000 (54s)
+02:14:39 fid learned K=10: {'fid': 59.742905732447866, 'precision': 0.6780000329017639, 'recall': 0.6020000576972961, 'n': 1000, 'sampler': 'learned', 'K': 10}
+02:15:08 fid samples fixed_large K=10 n=1000 (29s)
+02:15:30 fid fixed_large K=10: {'fid': 267.17688944087047, 'precision': 0.6570000052452087, 'recall': 0.036000002175569534, 'n': 1000, 'sampler': 'fixed_large', 'K': 10}
+02:15:59 fid samples fixed_small K=10 n=1000 (29s)
+02:16:14 fid fixed_small K=10: {'fid': 62.99672520932785, 'precision': 0.6630000472068787, 'recall': 0.578000009059906, 'n': 1000, 'sampler': 'fixed_small', 'K': 10}
+02:16:44 fid samples ddim K=10 n=1000 (30s)
+02:17:03 fid ddim K=10: {'fid': 45.086345060046824, 'precision': 0.7310000061988831, 'recall': 0.6790000200271606, 'n': 1000, 'sampler': 'ddim', 'K': 10}
+02:18:17 fid samples learned K=25 n=1000 (74s)
+02:18:44 fid learned K=25: {'fid': 39.387978393299306, 'precision': 0.7800000309944153, 'recall': 0.6770000457763672, 'n': 1000, 'sampler': 'learned', 'K': 25}
+02:19:57 fid samples fixed_large K=25 n=1000 (74s)
+02:20:15 fid fixed_large K=25: {'fid': 144.07436751643075, 'precision': 0.6340000033378601, 'recall': 0.29500001668930054, 'n': 1000, 'sampler': 'fixed_large', 'K': 25}
+02:21:28 fid samples fixed_small K=25 n=1000 (73s)
+02:21:47 fid fixed_small K=25: {'fid': 43.99671106114033, 'precision': 0.7450000643730164, 'recall': 0.6680000424385071, 'n': 1000, 'sampler': 'fixed_small', 'K': 25}
+02:23:01 fid samples ddim K=25 n=1000 (73s)
+02:23:22 fid ddim K=25: {'fid': 37.888246495419594, 'precision': 0.7380000352859497, 'recall': 0.7120000123977661, 'n': 1000, 'sampler': 'ddim', 'K': 25}
+02:25:48 fid samples learned K=50 n=1000 (146s)
+02:26:16 fid learned K=50: {'fid': 34.1931888338047, 'precision': 0.8040000200271606, 'recall': 0.718000054359436, 'n': 1000, 'sampler': 'learned', 'K': 50}
+02:28:41 fid samples fixed_large K=50 n=1000 (145s)
+02:29:11 fid fixed_large K=50: {'fid': 87.27142010739647, 'precision': 0.6740000247955322, 'recall': 0.4580000340938568, 'n': 1000, 'sampler': 'fixed_large', 'K': 50}
+02:31:37 fid samples fixed_small K=50 n=1000 (145s)
+02:32:14 fid fixed_small K=50: {'fid': 37.97345043031089, 'precision': 0.7790000438690186, 'recall': 0.6980000138282776, 'n': 1000, 'sampler': 'fixed_small', 'K': 50}
+02:34:42 fid samples ddim K=50 n=1000 (147s)
+02:35:08 fid ddim K=50: {'fid': 35.55958750376294, 'precision': 0.7930000424385071, 'recall': 0.7160000205039978, 'n': 1000, 'sampler': 'ddim', 'K': 50}
+02:40:00 fid samples learned K=100 n=1000 (292s)
+02:40:16 fid learned K=100: {'fid': 32.39225128132654, 'precision': 0.815000057220459, 'recall': 0.703000009059906, 'n': 1000, 'sampler': 'learned', 'K': 100}
+02:45:07 fid samples fixed_large K=100 n=1000 (290s)
+02:45:20 fid fixed_large K=100: {'fid': 58.378102698538214, 'precision': 0.7760000228881836, 'recall': 0.5750000476837158, 'n': 1000, 'sampler': 'fixed_large', 'K': 100}
+02:50:09 fid samples fixed_small K=100 n=1000 (289s)
+02:50:20 fid fixed_small K=100: {'fid': 35.12909538634301, 'precision': 0.8080000281333923, 'recall': 0.6990000605583191, 'n': 1000, 'sampler': 'fixed_small', 'K': 100}
+02:55:10 fid samples ddim K=100 n=1000 (290s)
+02:55:20 fid ddim K=100: {'fid': 34.36049784681552, 'precision': 0.7850000262260437, 'recall': 0.7260000109672546, 'n': 1000, 'sampler': 'ddim', 'K': 100}
+03:07:23 fid samples learned K=250 n=1000 (723s)
+03:07:34 fid learned K=250: {'fid': 31.892580333997557, 'precision': 0.8040000200271606, 'recall': 0.7410000562667847, 'n': 1000, 'sampler': 'learned', 'K': 250}
+03:19:38 fid samples fixed_large K=250 n=1000 (724s)
+03:20:00 fid fixed_large K=250: {'fid': 38.10010336461943, 'precision': 0.781000018119812, 'recall': 0.7080000042915344, 'n': 1000, 'sampler': 'fixed_large', 'K': 250}
+03:32:06 fid samples fixed_small K=250 n=1000 (725s)
+03:32:25 fid fixed_small K=250: {'fid': 33.139792086916316, 'precision': 0.8060000538825989, 'recall': 0.7330000400543213, 'n': 1000, 'sampler': 'fixed_small', 'K': 250}
+03:44:34 fid samples ddim K=250 n=1000 (728s)
+03:44:58 fid ddim K=250: {'fid': 33.49478285820385, 'precision': 0.8030000329017639, 'recall': 0.7290000319480896, 'n': 1000, 'sampler': 'ddim', 'K': 250}
+03:44:58 === stage fid done in 5626s ===

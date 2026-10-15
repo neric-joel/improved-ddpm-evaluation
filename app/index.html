@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Improved DDPM Demo</title>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/demo.css">
+</head>
+<body>
+<div id="stage">
+  <header class="rail">
+    <div class="brand">Improved DDPM <span>(2021)</span></div>
+    <nav class="steps" id="steps" aria-label="Scenes"></nav>
+    <div class="meta"><span class="live-pill" id="livePill"><i></i><span>checking GPU</span></span></div>
+  </header>
+  <div class="timer" id="timer">6:00</div>
+
+  <!-- 1 NOISE -->
+  <section class="scene" data-name="Noise schedule" id="s-noise">
+    <h1 class="title">Noise schedules: linear versus cosine</h1>
+    <p class="sub">Training adds Gaussian noise step by step. Both images use the same picture, the same noise sample and the same step t; only the schedule differs.</p>
+    <div class="body" style="grid-template-columns: 440px 440px 1fr; grid-template-rows: 1fr auto;">
+      <div class="panel">
+        <h3>Linear <span class="note">Ho et al., 2020</span></h3>
+        <canvas class="px" id="n-lin"></canvas>
+        <div class="imglabel"><span style="color:var(--base)" id="n-lin-state">–</span><span class="v" id="n-lin-a">–</span></div>
+        <div class="minifilm" id="n-lin-film"></div>
+      </div>
+      <div class="panel">
+        <h3>Cosine <span class="note">this paper, Eq. 17</span></h3>
+        <canvas class="px" id="n-cos"></canvas>
+        <div class="imglabel"><span style="color:var(--ours)" id="n-cos-state">–</span><span class="v" id="n-cos-a">–</span></div>
+        <div class="minifilm" id="n-cos-film"></div>
+      </div>
+      <div class="panel">
+        <h3>Signal remaining, ᾱ<sub>t</sub></h3>
+        <div id="n-chart"></div>
+        <div class="statrow" style="grid-template-columns: 1fr 1fr; margin-top: 12px;">
+          <div class="statbox"><div class="stat-k">Linear: steps that are almost pure noise</div><div class="big-stat" style="color:var(--base)" id="n-wl">–</div></div>
+          <div class="statbox"><div class="stat-k">Cosine: steps that are almost pure noise</div><div class="big-stat" style="color:var(--ours)" id="n-wc">–</div></div>
+        </div>
+        <div class="stat-s" style="font-size:21px;color:#555">“Almost pure noise”: the original image is scaled by less than 0.05.</div>
+      </div>
+      <div class="panel" style="grid-column: 1 / -1; display:grid; grid-template-columns: 300px 1fr 260px; gap: 32px; align-items:center; border-top:1px solid var(--rule); padding-top: 14px;">
+        <div><div class="stat-k">Diffusion step</div><div class="big-stat" style="font-size:44px" id="n-t">t = 0</div></div>
+        <input type="range" class="big" id="n-slider" min="0" max="1000" value="350" aria-label="diffusion step">
+        <div style="font-size:19px;color:var(--faint)"><span class="kbd">↑</span> <span class="kbd">↓</span> move t &nbsp; <span class="kbd">P</span> play</div>
+      </div>
+    </div>
+    <div class="ref">Paper §3.2, Eq. 17, Figs. 3 and 5.</div>
+  </section>
+
+  <!-- 2 GENERATE -->
+  <section class="scene" data-name="Generation" id="s-gen">
+    <h1 class="title">Generation runs the noising process in reverse</h1>
+    <p class="sub">Starting from noise, the network repeatedly predicts and removes noise. The learned variance Σθ sets how much fresh noise is added back at each step.</p>
+    <div class="body" style="grid-template-columns: 520px 520px 1fr;">
+      <div class="panel">
+        <h3>Current sample x<sub>t</sub> <span class="note" id="g-src">recorded run</span></h3>
+        <img class="px" id="g-x" alt="current sample">
+        <div class="imglabel"><span id="g-t">t = 4000</span><span class="v" id="g-step">step 0 of 50</span></div>
+      </div>
+      <div class="panel">
+        <h3>Network’s estimate of the clean image</h3>
+        <div style="position:relative"><img class="px" id="g-x0" alt="predicted clean image"><div id="g-x0-empty" style="position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:0 80px;font-size:26px;color:#555">The clean-image estimate appears after the first reverse step.</div></div>
+        <div class="imglabel"><span>predicted x<sub>0</sub></span><span class="v" id="g-el">0.0 s</span></div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:22px;">
+        <div><div class="stat-k">Sampling steps K</div><div class="segc" id="g-k"><button data-v="10">10</button><button data-v="50" class="on">50</button><button data-v="250">250</button></div></div>
+        <div><div class="stat-k">Reverse-step variance</div><div class="segc" id="g-var"><button data-v="learned" class="on">learned Σθ</button><button data-v="fixed_large">fixed σ² = β</button></div></div>
+        <div class="progressbar"><i id="g-prog"></i></div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <button class="btn primary" id="g-live">Generate on the GPU</button>
+          <button class="btn" id="g-replay">Replay recording</button>
+        </div>
+        <div class="banner" id="g-msg">Trained with T = 4000 steps, sampled here with K = 50 using the paper's respacing (Eq. 19), without retraining.</div>
+        <div style="font-size:18px;color:var(--faint)"><span class="kbd">G</span> generate &nbsp; <span class="kbd">↑</span><span class="kbd">↓</span> change K &nbsp; <span class="kbd">V</span> switch variance</div>
+      </div>
+    </div>
+    <div class="ref">Paper §2, Eqs. 3, 13, 15, 19. Official CIFAR-10 L<sub>hybrid</sub> checkpoint (github.com/openai/improved-diffusion).</div>
+  </section>
+
+  <!-- 3 SPEED -->
+  <section class="scene" data-name="Fewer steps" id="s-speed">
+    <h1 class="title">Fewer sampling steps: learned versus fixed variance</h1>
+    <p class="sub" style="margin-bottom:18px">Released CIFAR-10 checkpoint, same starting noise; only the sampler changes (variance rule or DDIM).</p>
+    <div class="body" style="grid-template-columns: 430px 430px 1fr; grid-template-rows: auto 1fr; row-gap: 22px;">
+      <div class="panel" style="grid-column: 1 / 3; display:flex; align-items:center; gap:20px;">
+        <div class="stat-k" style="margin:0">Sampling steps K</div>
+        <div class="segc" id="sp-k"></div>
+        <div style="margin-left:auto;font-size:18px;color:var(--faint)"><span class="kbd">↑</span><span class="kbd">↓</span> K &nbsp; <span class="kbd">V</span> comparison</div>
+      </div>
+      <div class="panel" style="grid-row: 1 / 3; grid-column: 3; display:flex; flex-direction:column; gap:10px;">
+        <h3 style="margin-bottom:0">Quality and speed <span class="note" id="sp-fidtag">FID</span></h3>
+        <div id="sp-fid"></div>
+        <div id="sp-lat"></div>
+        <div class="banner" id="sp-banner" style="font-size:22px"></div>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--ours)">Learned Σθ <span class="note">this paper</span></h3>
+        <img class="px crossfade" id="sp-a" alt="learned variance samples">
+        <div class="imglabel"><span class="v">16 samples, shared seeds</span><span class="v" id="sp-ka">K = 10</span></div>
+      </div>
+      <div class="panel">
+        <h3><span id="sp-bname" style="color:var(--base)">Fixed σ² = β</span> <span class="note" id="sp-btag">DDPM default</span></h3>
+        <div style="position:relative"><img class="px crossfade" id="sp-b" alt="comparison samples"><div id="sp-b-empty" style="position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:0 60px;font-size:24px;color:#555">Not run at this K. At 4000 steps only the learned variance was sampled.</div></div>
+        <div class="imglabel"><span class="v">same starting noise, same network</span><span class="v" id="sp-kb">K = 10</span></div>
+      </div>
+    </div>
+    <div class="ref">Paper §4, Eq. 19, Fig. 8. Our measurements on an RTX 3050 Ti laptop GPU.</div>
+  </section>
+
+  <!-- 4 SHIFT -->
+  <section class="scene" data-name="Dataset shift" id="s-ood">
+    <h1 class="title">Trained on CIFAR-10, scored on SVHN: does the likelihood notice?</h1>
+    <p class="sub">The paper treats a better log-likelihood as evidence that the model covers its training data. A deployment question: can the same number flag inputs unlike the training data?</p>
+    <div class="body" style="grid-template-columns: 1.35fr 1fr;">
+      <div class="panel" id="o-hists"><div class="pending">Experiment still running.</div></div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:18px;">
+        <div class="statbox" style="display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;border-top:0;padding-top:0">
+          <div><div class="stat-k">OOD AUROC, SVHN</div><div class="big-stat" id="o-auc" style="color:var(--bad)">–</div></div>
+          <div style="font-size:21px;line-height:1.45;color:var(--muted)">Score: bits/dim, with SVHN as the unfamiliar class.<br><b style="color:var(--text)">0.5 is chance, 1.0 is a perfect alarm.</b><br><span id="o-auc2" style="color:var(--faint);font-size:18px"></span></div>
+        </div>
+        <div><div class="stat-k" style="display:flex;justify-content:space-between">Ranked from most to least “likely” under the model <span style="color:var(--faint)">bits/dim</span></div>
+          <div class="probes" id="o-probes"></div>
+          <div style="display:flex;gap:14px;align-items:center;margin-top:12px">
+            <label class="btn" id="o-upbtn" style="font-size:19px;padding:8px 16px">Score your own image<input type="file" id="o-up" accept="image/*" hidden></label>
+            <span id="o-upmsg" style="font-size:18px;color:var(--faint)">needs the GPU server</span></div></div>
+        <div id="o-bars"></div>
+        <div class="banner" id="o-banner" style="font-size:22px">–</div>
+      </div>
+    </div>
+    <div class="ref">Our check: NLL bound (Appendix E schedule), released checkpoint, 500 images per set. See Heng et al. (2024).</div>
+  </section>
+
+  <!-- 5 VERDICT -->
+  <section class="scene" data-name="Verdict" id="s-verdict">
+    <h1 class="title">What the evidence supports</h1>
+    <table class="verdict" id="v-table"></table>
+    <p class="beyond"><b>Deployment checks beyond FID and NLL:</b> shift detection, memorization, subgroup coverage, latency, energy, and image provenance.</p>
+    <div class="ref">Sources: the paper's Tables 1 to 4, Fig. 8, Appendices C, F, G; our runs; Carlini et al. (2023); Dhariwal and Nichol (2021).</div>
+  </section>
+
+  <!-- BACKUP: memorization -->
+  <section class="scene" data-name="Copies?" data-backup="1" id="s-mem">
+    <h1 class="title">Are the samples copies of training images?</h1>
+    <p class="sub">The paper reports overfitting (Appendices F and G) but does not test for copying. Carlini et al. (2023) extracted 301 training images from one million samples of this released checkpoint.</p>
+    <div class="body" style="grid-template-columns: 1.2fr 1fr;">
+      <div class="panel" id="m-pairs"><div class="pending">Nearest-neighbor stage not run yet.</div></div>
+      <div class="panel"><h3>Distance to the nearest training image</h3><div id="m-hist"></div><div class="banner" id="m-banner" style="font-size:22px;margin-top:12px">–</div></div>
+    </div>
+    <div class="ref">Pixel-space L2 nearest neighbors in the 50,000 CIFAR-10 training images.</div>
+  </section>
+
+  <!-- BACKUP: why variance -->
+  <section class="scene" data-name="Why Σ" data-backup="1" id="s-why">
+    <h1 class="title">Why a learned variance matters when steps are few</h1>
+    <p class="sub">The two standard choices, β (upper bound) and <span class="bt">β</span> (posterior variance, lower bound), after respacing T = 4000 to K steps. With all 4000 steps they are nearly equal except at the first step; with 10 steps β is far larger near the clean end, so σ² = β leaves noise in the image.</p>
+    <div class="body" style="grid-template-columns: 1.4fr 1fr;">
+      <div class="panel"><div id="w-chart"></div></div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:18px">
+        <div><div class="stat-k">K</div><div class="segc" id="w-k"><button data-v="10">10</button><button data-v="25">25</button><button data-v="50" class="on">50</button><button data-v="250">250</button><button data-v="4000">4000</button></div></div>
+        <div class="statbox"><div class="stat-k">β / <span class="bt">β</span> at the second-to-last step</div><div class="big-stat" id="w-ratio" style="color:var(--base)">–</div></div>
+        <div class="banner">The learned Σθ = exp(v·log β + (1−v)·log <span class="bt">β</span>) stays between the respaced bounds, so it adjusts to any K.</div>
+      </div>
+    </div>
+    <div class="ref">Paper Eqs. 10, 15, 19 and Fig. 1.</div>
+  </section>
+
+  <!-- BACKUP: ImageNet -->
+  <section class="scene" data-name="ImageNet" data-backup="1" id="s-in64">
+    <h1 class="title">ImageNet 64×64 samples</h1>
+    <p class="sub" style="margin-bottom:18px">Official unconditional L<sub>hybrid</sub> checkpoint (121M parameters). Same starting noise in every panel.</p>
+    <div class="body" style="grid-template-columns: repeat(3, 1fr); align-content:start; row-gap: 22px;" id="i-grid"><div class="pending" style="grid-column:1/-1">ImageNet stage not run yet.</div></div>
+    <div class="ref">Paper §3, Appendix H.</div>
+  </section>
+
+  <div class="hint"><span class="kbd">←</span><span class="kbd">→</span> scenes &nbsp; <span class="kbd">B</span> Q&amp;A &nbsp; <span class="kbd">F</span> full screen &nbsp; <span class="kbd">T</span> timer</div>
+</div>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/data/demo_data.js"></script>
+<script src="assets/data/replay.js"></script>
+<script src="assets/js/demo.js"></script>
+</body>
+</html>

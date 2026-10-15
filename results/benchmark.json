@@ -1,0 +1,16 @@
+{
+  "device": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+  "cifar_hybrid": {
+    "params_M": 52.5,
+    "bs1_ms_per_step": 40.8,
+    "bs16_ms_per_step": 73.63,
+    "bs64_ms_per_step": 264.65,
+    "bs128_ms_per_step": 519.05
+  },
+  "imagenet64_hybrid": {
+    "params_M": 121.1,
+    "bs1_ms_per_step": 43.22,
+    "bs8_ms_per_step": 146.9,
+    "bs32_ms_per_step": 543.19
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "plain grey",
+    "bpd": 0.15466520190238953
+  },
+  {
+    "name": "plain black",
+    "bpd": 0.11132260411977768
+  },
+  {
+    "name": "smooth gradient",
+    "bpd": 1.7385138273239136
+  },
+  {
+    "name": "SVHN digit",
+    "bpd": 2.125392436981201
+  },
+  {
+    "name": "CIFAR-10 photo",
+    "bpd": 3.3607873916625977
+  },
+  {
+    "name": "CIFAR-10 photo (2)",
+    "bpd": 3.353623867034912
+  },
+  {
+    "name": "photo + heavy noise",
+    "bpd": 14.366722106933594
+  },
+  {
+    "name": "checker board",
+    "bpd": 3.8361425399780273
+  },
+  {
+    "name": "random pixels",
+    "bpd": 17.875158309936523
+  }
+]
